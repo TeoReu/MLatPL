@@ -67,18 +67,20 @@ def f(Me = 6e24, Ms=2e30, Mj=1.9e27, tf = 120):
     print t2
     """
     KE[0] = KineticEnergy(v[0, :], Me)
-    PE[0] = PotentialEnergy(r[0, :])
+    PE[0] = PotentialEnergy(r[0, :], GG, Me, Ms)
     AM[0] = AngMomentum(r[0, :], v[0, :], Me)
     AreaVal[0] = 0
 
     for i in range(0, N - 1):
-        [r[i + 1, :], v[i + 1, :]] = RK4Solver(t[i], r[i, :], v[i, :], h, 'earth', rj[i, :], vj[i, :])
-        [rj[i + 1, :], vj[i + 1, :]] = RK4Solver(t[i], rj[i, :], vj[i, :], h, 'jupiter', r[i, :], v[i, :])
+        [r[i + 1, :], v[i + 1, :]] = RK4Solver(t[i], r[i, :], v[i, :], h, 'earth', rj[i, :], vj[i, :], Me, Mj, Ms, GG)
+        [rj[i + 1, :], vj[i + 1, :]] = RK4Solver(t[i], rj[i, :], vj[i, :], h, 'jupiter', r[i, :], v[i, :], Me, Mj, Ms, GG)
 
-        KE[i + 1] = KineticEnergy(v[i + 1, :])
-        PE[i + 1] = PotentialEnergy(r[i + 1, :])
-        AM[i + 1] = AngMomentum(r[i + 1, :], v[i + 1, :])
+        KE[i + 1] = KineticEnergy(v[i + 1, :], Me)
+        PE[i + 1] = PotentialEnergy(r[i + 1, :], GG, Me, Ms)
+        AM[i + 1] = AngMomentum(r[i + 1, :], v[i + 1, :], Me)
         AreaVal[i + 1] = AreaVal[i] + AreaCalc(r[i, :], r[i + 1, :])
+
+    return r, rj, t, KE, PE, AM, AreaVal
 
         #TODO : check if the positions for each and jupiter are out of the grid
         #return the number of iterations it took

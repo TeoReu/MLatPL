@@ -47,19 +47,19 @@ def force_ej(re, rj, GG, Me, Mj):
     return F
 
 
-def force(r, planet, ro, vo):
+def force(r, planet, ro, vo, GG, Ms, Mj, Me):
     if planet == 'earth':
-        return force_es(r) + force_ej(r, ro)
+        return force_es(r, GG, Me, Ms) + force_ej(r, ro, GG, Me, Mj)
     if planet == 'jupiter':
-        return force_js(r) - force_ej(r, ro)
+        return force_js(r, GG, Mj, Ms) - force_ej(r, ro, GG, Me, Mj)
 
 
 def dr_dt(t, r, v, planet, ro, vo):
     return v
 
 
-def dv_dt(t, r, v, planet, ro, vo, Me, Mj):
-    F = force(r, planet, ro, vo)
+def dv_dt(t, r, v, planet, ro, vo, Me, Mj, Ms, GG):
+    F = force(r, planet, ro, vo, GG, Ms, Mj, Me)
     if planet == 'earth':
         y = F / Me
     if planet == 'jupiter':
@@ -69,34 +69,34 @@ def dv_dt(t, r, v, planet, ro, vo, Me, Mj):
 
 # Differential equation solvers
 # ===================================================================
-def EulerSolver(t, r, v, h):
+def EulerSolver(t, r, v, h, Me, Mj, Ms, GG):
     z = np.zeros([2, 2])
     r1 = r + h * dr_dt(t, r, v)
-    v1 = v + h * dv_dt(t, r, v)
+    v1 = v + h * dv_dt(t, r, v, Me, Mj, Ms, GG)
     z = [r1, v1]
     return z
 
 
-def EulerCromerSolver(t, r, v, h):
+def EulerCromerSolver(t, r, v, h, Me, Mj, Ms, GG):
     z = np.zeros([2, 2])
     r = r + h * dr_dt(t, r, v)
-    v = v + h * dv_dt(t, r, v)
+    v = v + h * dv_dt(t, r, v, Me, Mj, Ms, GG)
     z = [r, v]
     return z
 
 
-def RK4Solver(t, r, v, h, planet, ro, vo):
+def RK4Solver(t, r, v, h, planet, ro, vo, Me, Mj, Ms, GG):
     k11 = dr_dt(t, r, v, planet, ro, vo)
-    k21 = dv_dt(t, r, v, planet, ro, vo)
+    k21 = dv_dt(t, r, v, planet, ro, vo, Me, Mj, Ms, GG)
 
     k12 = dr_dt(t + 0.5 * h, r + 0.5 * h * k11, v + 0.5 * h * k21, planet, ro, vo)
-    k22 = dv_dt(t + 0.5 * h, r + 0.5 * h * k11, v + 0.5 * h * k21, planet, ro, vo)
+    k22 = dv_dt(t + 0.5 * h, r + 0.5 * h * k11, v + 0.5 * h * k21, planet, ro, vo, Me, Mj, Ms, GG)
 
     k13 = dr_dt(t + 0.5 * h, r + 0.5 * h * k12, v + 0.5 * h * k22, planet, ro, vo)
-    k23 = dv_dt(t + 0.5 * h, r + 0.5 * h * k12, v + 0.5 * h * k22, planet, ro, vo)
+    k23 = dv_dt(t + 0.5 * h, r + 0.5 * h * k12, v + 0.5 * h * k22, planet, ro, vo, Me, Mj, Ms, GG)
 
     k14 = dr_dt(t + h, r + h * k13, v + h * k23, planet, ro, vo)
-    k24 = dv_dt(t + h, r + h * k13, v + h * k23, planet, ro, vo)
+    k24 = dv_dt(t + h, r + h * k13, v + h * k23, planet, ro, vo, Me, Mj, Ms, GG)
 
     y0 = r + h * (k11 + 2. * k12 + 2. * k13 + k14) / 6.
     y1 = v + h * (k21 + 2. * k22 + 2. * k23 + k24) / 6.
@@ -114,8 +114,8 @@ def KineticEnergy(v, Me):
     return 0.5 * Me * vn ** 2
 
 
-def PotentialEnergy(r):
-    fmag = np.linalg.norm(force_es(r))
+def PotentialEnergy(r, GG, Me, Ms):
+    fmag = np.linalg.norm(force_es(r, GG, Me, Ms))
     rmag = np.linalg.norm(r)
     return -fmag * rmag
 
@@ -147,3 +147,4 @@ def mplot(fign, x, y, xl, yl, clr, lbl):
     py.xlabel(xl)
     py.ylabel(yl)
     return py.plot(x, y, clr, linewidth=1.0, label=lbl)
+
