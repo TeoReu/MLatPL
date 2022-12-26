@@ -126,6 +126,8 @@ def AngMomentum(r, v, Me):
     r = r / rn
     v = v / vn
     rdotv = r[0] * v[0] + r[1] * v[1]
+    if rdotv > 1:
+        rdotv = 1
     theta = math.acos(rdotv)
     return Me * rn * vn * np.sin(theta)
 

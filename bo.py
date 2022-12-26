@@ -19,7 +19,7 @@ def example():
     myProblem.run_optimization(max_iter)
 
    # myProblem contains now everything about the BO of the function
-   # myProblem.plot_acquisition() to plot the acquisition function
+    #myProblem.plot_acquisition() #to plot the acquisition function
 
 
 def bo_on_l3_lagrange_point(f, max_iter):

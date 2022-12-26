@@ -3,8 +3,49 @@ from matplotlib import animation, pyplot as plt
 from planets import *
 from utils import *
 
+Me = 6e10 #6e24
+Ms= 2e30
+Mj =1.9e27
 
-r, rj, t, KE, PE, AM, AreaVal = f()
+def lagrange(variables):
+    x, y  = variables[0]
+    vx, vy = [0, -2.7611061613503196] # these are not used rn
+
+    # To enable 4 parameters: UNCOMMENT THIS and COMMENT ABOVE. Same at line 58 in utils.py
+    #x, y, vx, vy = variables[0]
+
+
+    r, rj, t, KE, PE, AM, AreaVal = f(Me, Ms, Mj, position_X=x, position_Y=y, velocity_X=vx, velocity_Y=vy)
+    loss = 0
+    initial = math.sqrt(r[0][0]**2 + r[0][1]**2)
+    for i,j in r:
+        loss += abs(initial - math.sqrt(i**2 + j**2))
+    #print(f"Loss: {loss}")
+    return loss
+
+#print(lagrange([[-5.17, 0]]))
+r, rj, t, KE, PE, AM, AreaVal = f(Me, Ms, Mj, position_X=-5.2, position_Y=0, velocity_X=0, velocity_Y=-2.7611061613503196)
+
+
+lbl = 'orbit'
+py.plot(0,0,'ro',linewidth = 7)
+mplot(1,r[:,0],r[:,1],r'$x$ position (AU)',r'$y$ position (AU)','blue','Earth')
+mplot(1,rj[:,0],rj[:,1],r'$x$ position (AU)',r'$y$ position (AU)','green','Super Jupiter')
+py.ylim([-9, 9])
+
+py.axis('equal')
+mplot(2,t,KE,r'Time, $t$ (years)',r'Kinetice Energy, $KE$ ($\times$'+str("%.*e"%(2, EE))+' Joule)','blue','KE')
+mplot(2,t,PE,r'Time, $t$ (years)',r'Potential Energy, $KE$ ($\times$'+str("%.*e"%(2, EE))+' Joule)','red','PE')
+mplot(2,t,KE+PE,r'Time, $t$ (years)',r'Total Energy, $KE$ ($\times$'+str("%.*e"%(2, EE))+' Joule)','black','Total Energy')
+q=py.legend(loc = 0)
+q.draw_frame(False)
+py.ylim([-180, 180])
+
+mplot(3,t,AM,r'Time, $t$ (years)',r'Angular Momentum','black',lbl)
+py.ylim([4, 8])
+
+mplot(4,t,AreaVal,r'Time, $t$ (years)',r'Sweeped Area ($AU^2$)','black',lbl)
+
 
 
 fig, ax = py.subplots()
@@ -32,25 +73,6 @@ ax.text(5.5,-6.4,'Sun')
 ttl = ax.text(0.24, 1.05, '', transform = ax.transAxes, va='center')
 #plt.title('Elapsed time, T=%i years' %u)
 
-lbl = 'orbit'
-py.plot(0,0,'ro',linewidth = 7)
-mplot(1,r[:,0],r[:,1],r'$x$ position (AU)',r'$y$ position (AU)','blue','Earth')
-mplot(1,rj[:,0],rj[:,1],r'$x$ position (AU)',r'$y$ position (AU)','green','Super Jupiter')
-py.ylim([-9, 9])
-
-py.axis('equal')
-mplot(2,t,KE,r'Time, $t$ (years)',r'Kinetice Energy, $KE$ ($\times$'+str("%.*e"%(2, EE))+' Joule)','blue','KE')
-mplot(2,t,PE,r'Time, $t$ (years)',r'Potential Energy, $KE$ ($\times$'+str("%.*e"%(2, EE))+' Joule)','red','PE')
-mplot(2,t,KE+PE,r'Time, $t$ (years)',r'Total Energy, $KE$ ($\times$'+str("%.*e"%(2, EE))+' Joule)','black','Total Energy')
-q=py.legend(loc = 0)
-q.draw_frame(False)
-py.ylim([-180, 180])
-
-mplot(3,t,AM,r'Time, $t$ (years)',r'Angular Momentum','black',lbl)
-py.ylim([4, 8])
-
-mplot(4,t,AreaVal,r'Time, $t$ (years)',r'Sweeped Area ($AU^2$)','black',lbl)
-
 
 def init():
     line1.set_data([], [])
@@ -68,6 +90,6 @@ def animate(i):
     line2.set_data(rj[i:max(1, i - jupiter_trail):-1, 0], rj[i:max(1, i - jupiter_trail):-1, 1])
     return (line1, line2)
 
-anim = animation.FuncAnimation(fig, animate, init_func=init,
-                               frames=400, interval=5, blit=True)
-plt.show()
+# anim = animation.FuncAnimation(fig, animate, init_func=init,
+#                                frames=1000, interval=5, blit=True)
+# anim.save('orbit.mp4', fps=30,dpi = 500, extra_args=['-vcodec', 'libx264'])

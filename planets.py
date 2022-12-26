@@ -17,14 +17,14 @@ GG = (MM * G * TT ** 2) / (RR ** 3)
 
 ti = 0  # initial time = 0
 
-def f(Me = 6e24, Ms=2e30, Mj=1.9e27, tf = 120):
+def f(Me = 6e24, Ms=2e30, Mj=1.9e27, tf = 120, position_X = -5.2, position_Y=0, velocity_X=0, velocity_Y=0):
     # Mass of Earth in kg = Me
     # Mass of Sun in kg = Ms
     # Mass of Jupiter = Mj
     # final time = 120 years = tf
     Me = Me / MM  # Normalized mass of Earth
     Ms = Ms / MM  # Normalized mass of Sun
-    Mj = 500 * Mj / MM  # Normalized mass of Jupiter/Super Jupiter
+    Mj = Mj / MM  # Normalized mass of Jupiter/Super Jupiter
 
     N = 100 * tf  # 100 points per year
     t = np.linspace(ti, tf, N)  # time array from ti to tf with N points
@@ -43,14 +43,19 @@ def f(Me = 6e24, Ms=2e30, Mj=1.9e27, tf = 120):
     rj = np.zeros([N, 2])  # position vector of Jupiter
     vj = np.zeros([N, 2])  # velocity vector of Jupiter
 
-    ri = [1496e8 / RR, 0]  # initial position of earth
+    ri = [position_X, position_Y]  # initial position of earth
     rji = [5.2, 0]  # initial position of Jupiter
 
-    vv = np.sqrt(Ms * GG / ri[0])  # Magnitude of Earth's initial velocity
+    vv = np.sqrt(Ms * GG / abs(ri[0]))  # Magnitude of Earth's initial velocity
+    #print(vv)
 
     vvj = 13.06e3 * TT / RR  # Magnitude of Jupiter's initial velocity
 
-    vi = [0, vv * 1.0]  # Initial velocity vector for Earth.Taken to be along y direction as ri is on x axis.
+
+    vi = [0,- vv * 1.0]  # Initial velocity vector for Earth.Taken to be along y direction as ri is on x axis.
+
+    # UNCOMMENT THIS FOR SPEED PARAMETERS
+    #vi = [velocity_X, velocity_Y]
     vji = [0, vvj * 1.0]  # Initial velocity vector for Jupiter
 
     # Initializing the arrays with initial values.
