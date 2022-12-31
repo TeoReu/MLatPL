@@ -1,3 +1,5 @@
+import math
+
 from matplotlib import animation, pyplot as plt
 
 from planets import *
@@ -6,6 +8,7 @@ from utils import *
 Me = 6e10 #6e24
 Ms= 2e30
 Mj =1.9e27
+
 
 def lagrange(variables):
     x, y  = variables[0]
@@ -16,12 +19,41 @@ def lagrange(variables):
 
 
     r, rj, t, KE, PE, AM, AreaVal = f(Me, Ms, Mj, position_X=x, position_Y=y, velocity_X=vx, velocity_Y=vy)
+    # loss = 0
+    # initial = math.sqrt(r[0][0]**2 + r[0][1]**2)
+    # for i,j in r:
+    #     if abs(initial - math.sqrt(i**2 + j**2)) > initial:
+    #         loss += initial
+    #     else:
+    #         loss += abs(initial - math.sqrt(i**2 + j**2))
+    # print(f"Loss: {loss}")
+
+
     loss = 0
     initial = math.sqrt(r[0][0]**2 + r[0][1]**2)
-    for i,j in r:
-        loss += abs(initial - math.sqrt(i**2 + j**2))
-    #print(f"Loss: {loss}")
-    return loss
+
+    angle_diff = 0
+    unit_vector_1 = r[0] / np.linalg.norm(r[0])
+    unit_vector_2 = rj[0] / np.linalg.norm(rj[0])
+    dot_product = np.dot(unit_vector_1, unit_vector_2)
+    initial_angle = np.arccos(dot_product)
+    for v1, v2 in zip(r,rj):
+        unit_vector_1 = v1 / np.linalg.norm(v1)
+        unit_vector_2 = v2 / np.linalg.norm(v2)
+        dot_product = np.dot(unit_vector_1, unit_vector_2)
+        angle = np.arccos(dot_product)
+        angle_diff += abs(initial_angle - angle)
+
+        i,j = v1
+        if abs(initial - math.sqrt(i**2 + j**2)) > initial:
+            loss += initial
+        else:
+            loss += abs(initial - math.sqrt(i**2 + j**2))
+
+    print(f"Loss: {loss}")
+    print(f"Angle diff: {angle_diff}")
+    print(f"Combined loss: {loss + angle_diff*20}\n")
+    return loss + angle_diff*20
 
 #print(lagrange([[-5.17, 0]]))
 r, rj, t, KE, PE, AM, AreaVal = f(Me, Ms, Mj, position_X=-5.2, position_Y=0, velocity_X=0, velocity_Y=-2.7611061613503196)

@@ -17,7 +17,7 @@ GG = (MM * G * TT ** 2) / (RR ** 3)
 
 ti = 0  # initial time = 0
 
-def f(Me = 6e24, Ms=2e30, Mj=1.9e27, tf = 120, position_X = -5.2, position_Y=0, velocity_X=0, velocity_Y=0):
+def f(Me = 6e24, Ms=2e30, Mj=1.9e27, tf = 15, position_X = -5.2, position_Y=0, velocity_X=0, velocity_Y=0):
     # Mass of Earth in kg = Me
     # Mass of Sun in kg = Ms
     # Mass of Jupiter = Mj

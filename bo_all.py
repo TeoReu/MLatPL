@@ -4,13 +4,13 @@ import numpy as np
 
 from main import lagrange
 
-space = [{'name': 'x', 'type': 'continuous', 'domain': (-6, 6)},
-         {'name': 'y', 'type': 'continuous', 'domain': (-6, 6)}]
+space = [{'name': 'x', 'type': 'continuous', 'domain': (4,6)},#[(-7, -3), (3, 7)]},
+         {'name': 'y', 'type': 'continuous', 'domain': (-4,4)}]#[(-7, -3), (3, 7)]}]
          #{'name': 'vx', 'type': 'continuous', 'domain': (-5, 5)}]
          #{'name': 'vy', 'type': 'continuous', 'domain': (-5, 5)}]
 
-stability = GPyOpt.methods.BayesianOptimization(f=lagrange, domain=space)
-stability.run_optimization(500)
+stability = GPyOpt.methods.BayesianOptimization(f=lagrange, domain=space)#, normalize_Y=True, initial_design_type='latin', initial_design_numdata=30)
+stability.run_optimization(300)
 
 # in stability.x_opt we have best values for
 print(stability.x_opt)
