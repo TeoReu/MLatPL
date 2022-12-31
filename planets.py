@@ -51,8 +51,12 @@ def f(Me = 6e24, Ms=2e30, Mj=1.9e27, tf = 120, position_X = -5.2, position_Y=0, 
 
     vvj = 13.06e3 * TT / RR  # Magnitude of Jupiter's initial velocity
 
+    angle = math.atan2(position_Y, position_X)
 
-    vi = [0,- vv * 1.0]  # Initial velocity vector for Earth.Taken to be along y direction as ri is on x axis.
+    cos = math.cos(angle)
+    sin = math.sin(angle)
+
+    vi = [sin * vv, cos * vv]  # Initial velocity vector for Earth.Taken to be along y direction as ri is on x axis.
 
     # UNCOMMENT THIS FOR SPEED PARAMETERS
     #vi = [velocity_X, velocity_Y]
